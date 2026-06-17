@@ -1,179 +1,185 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
 <meta charset="UTF-8">
-<title>Life4Cut</title>
+<title>PhotoBooth</title>
 
-<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <style>
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
+*{box-sizing:border-box;margin:0;padding:0}
 
 body{
-
-    background:#8f8f8f;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
+    background:#888;
     min-height:100vh;
-
-    font-family:Arial;
-
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    gap:30px;
+    padding:30px;
+    font-family:Arial, sans-serif;
 }
 
-.wrapper{
+.panel{
+    background:white;
+    padding:20px;
+    width:280px;
+    border-radius:12px;
+}
 
-    text-align:center;
+.panel h2{
+    font-size:20px;
+    margin-bottom:15px;
+}
 
+.panel input,
+.panel select,
+.panel button{
+    width:100%;
+    margin-bottom:12px;
+    padding:10px;
+    font-size:15px;
+}
+
+.panel button{
+    background:#111;
+    color:white;
+    border:none;
+    cursor:pointer;
 }
 
 .frame{
-
     width:360px;
-
+    height:1080px;
     background:#111;
-
-    padding:12px;
-
+    padding:14px;
     box-shadow:0 25px 60px rgba(0,0,0,.45);
-
 }
 
-
 .photo{
-
     width:100%;
-
-    height:255px;
-
+    height:245px;
     object-fit:cover;
-
     display:block;
-
-    margin-bottom:8px;
-
+    margin-bottom:10px;
+    background:#333;
 }
 
 .footer{
-
     color:white;
-
     text-align:center;
-
-    padding-top:10px;
-
+    padding-top:12px;
     line-height:30px;
-
 }
 
 .date{
-
     font-size:18px;
-
     letter-spacing:2px;
-
 }
 
 .name{
-
     font-size:18px;
-
 }
 
-button{
-
-    margin-top:25px;
-
-    padding:12px 30px;
-
-    border:none;
-
-    background:#111;
-
-    color:white;
-
-    font-size:17px;
-
-    cursor:pointer;
-
+@media(max-width:800px){
+    body{
+        flex-direction:column;
+        align-items:center;
+    }
 }
-
-button:hover{
-
-    background:#333;
-
-}
-
 </style>
-
 </head>
 
 <body>
 
-<div class="wrapper">
+<div class="panel">
+    <h2>인생네컷 만들기</h2>
 
-<div class="frame" id="photo">
+    <input type="file" accept="image/*" onchange="loadPhoto(event, 0)">
+    <input type="file" accept="image/*" onchange="loadPhoto(event, 1)">
+    <input type="file" accept="image/*" onchange="loadPhoto(event, 2)">
+    <input type="file" accept="image/*" onchange="loadPhoto(event, 3)">
 
+    <input type="text" id="nameInput" placeholder="문구 입력" value="곽승윤조" oninput="updateText()">
 
-<img src="phpto1.jpg" class="photo">
-<img src="phpto2.jpg" class="photo">
-<img src="phpto3.jpg" class="photo">
-<img src="phpto4.jpg" class="photo">
+    <select id="colorSelect" onchange="changeColor()">
+        <option value="#111">검정 프레임</option>
+        <option value="#ffffff">흰색 프레임</option>
+        <option value="#f8c8dc">핑크 프레임</option>
+        <option value="#bde0fe">하늘색 프레임</option>
+    </select>
 
-<div class="footer">
-
-<div class="date">
-2026.06.17
+    <button onclick="saveImage()">PNG 저장</button>
 </div>
 
-<div class="name">
-곽승윤조
-</div>
+<div class="frame" id="photoFrame">
+    <img class="photo" id="photo0">
+    <img class="photo" id="photo1">
+    <img class="photo" id="photo2">
+    <img class="photo" id="photo3">
 
-</div>
-
-</div>
-
-<button onclick="saveImage()">
-PNG 저장
-</button>
-
+    <div class="footer" id="footer">
+        <div class="date" id="dateText"></div>
+        <div class="name" id="nameText">곽승윤조</div>
+    </div>
 </div>
 
 <script>
+function loadPhoto(event, index){
+    const file = event.target.files[0];
+    if(!file) return;
 
-function saveImage(){
+    const reader = new FileReader();
 
-html2canvas(document.querySelector("#photo"),{
+    reader.onload = function(e){
+        document.getElementById("photo" + index).src = e.target.result;
+    };
 
-scale:3
-
-}).then(function(canvas){
-
-let link=document.createElement("a");
-
-link.download="Life4Cut.png";
-
-link.href=canvas.toDataURL("image/png");
-
-link.click();
-
-});
-
+    reader.readAsDataURL(file);
 }
 
+function updateText(){
+    document.getElementById("nameText").innerText =
+        document.getElementById("nameInput").value;
+}
+
+function changeColor(){
+    const color = document.getElementById("colorSelect").value;
+    const frame = document.getElementById("photoFrame");
+    const footer = document.getElementById("footer");
+
+    frame.style.background = color;
+
+    if(color === "#ffffff" || color === "#f8c8dc" || color === "#bde0fe"){
+        footer.style.color = "#111";
+    }else{
+        footer.style.color = "white";
+    }
+}
+
+function setToday(){
+    const today = new Date();
+    const y = today.getFullYear();
+    const m = String(today.getMonth() + 1).padStart(2, "0");
+    const d = String(today.getDate()).padStart(2, "0");
+
+    document.getElementById("dateText").innerText = `${y}.${m}.${d}`;
+}
+
+function saveImage(){
+    html2canvas(document.querySelector("#photoFrame"), {
+        scale:3,
+        useCORS:true
+    }).then(function(canvas){
+        const link = document.createElement("a");
+        link.download = "Life4Cut.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+    });
+}
+
+setToday();
 </script>
 
 </body>
-
 </html>
