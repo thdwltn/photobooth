@@ -61,6 +61,7 @@ body{
     margin-bottom:10px;
     background:#333;
     position:relative;
+    touch-action:none;
 }
 
 .photo{
@@ -106,6 +107,12 @@ body{
     body{
         flex-direction:column;
         align-items:center;
+        padding:16px;
+    }
+
+    .panel{
+        width:100%;
+        max-width:360px;
     }
 }
 </style>
@@ -122,8 +129,8 @@ body{
     <input type="file" accept="image/*" onchange="loadPhoto(event,3)">
 
     <div class="tip">
-        사진 위에서 마우스 휠: 확대/축소<br>
-        사진 드래그: 위치 이동<br>
+        PC: 마우스 휠 확대/축소, 드래그 이동<br>
+        모바일: 두 손가락 확대/축소, 한 손가락 이동<br>
         더블클릭: 사진 위치 초기화
     </div>
 
@@ -141,21 +148,10 @@ body{
 
 <div class="frame" id="photoFrame">
 
-    <div class="photoBox">
-        <img class="photo" id="photo0">
-    </div>
-
-    <div class="photoBox">
-        <img class="photo" id="photo1">
-    </div>
-
-    <div class="photoBox">
-        <img class="photo" id="photo2">
-    </div>
-
-    <div class="photoBox">
-        <img class="photo" id="photo3">
-    </div>
+    <div class="photoBox"><img class="photo" id="photo0"></div>
+    <div class="photoBox"><img class="photo" id="photo1"></div>
+    <div class="photoBox"><img class="photo" id="photo2"></div>
+    <div class="photoBox"><img class="photo" id="photo3"></div>
 
     <div class="footer" id="footer">
         <div class="date" id="dateText"></div>
@@ -166,10 +162,10 @@ body{
 
 <script>
 const state = [
-    {scale:1, x:0, y:0, naturalW:0, naturalH:0, baseW:0, baseH:0},
-    {scale:1, x:0, y:0, naturalW:0, naturalH:0, baseW:0, baseH:0},
-    {scale:1, x:0, y:0, naturalW:0, naturalH:0, baseW:0, baseH:0},
-    {scale:1, x:0, y:0, naturalW:0, naturalH:0, baseW:0, baseH:0}
+    {scale:1, x:0, y:0, baseW:0, baseH:0},
+    {scale:1, x:0, y:0, baseW:0, baseH:0},
+    {scale:1, x:0, y:0, baseW:0, baseH:0},
+    {scale:1, x:0, y:0, baseW:0, baseH:0}
 ];
 
 let dragIndex = null;
@@ -177,6 +173,13 @@ let startX = 0;
 let startY = 0;
 let startPhotoX = 0;
 let startPhotoY = 0;
+
+let touchStartDistance = 0;
+let touchStartScale = 1;
+let touchStartCenterX = 0;
+let touchStartCenterY = 0;
+let touchStartPhotoX = 0;
+let touchStartPhotoY = 0;
 
 function loadPhoto(event,index){
     const file = event.target.files[0];
@@ -278,6 +281,80 @@ function endDrag(){
     dragIndex = null;
 }
 
+function getDistance(t1,t2){
+    const dx = t1.clientX - t2.clientX;
+    const dy = t1.clientY - t2.clientY;
+    return Math.sqrt(dx*dx + dy*dy);
+}
+
+function getCenter(t1,t2){
+    return {
+        x:(t1.clientX + t2.clientX) / 2,
+        y:(t1.clientY + t2.clientY) / 2
+    };
+}
+
+function startTouch(event,index){
+    event.preventDefault();
+
+    if(event.touches.length === 1){
+        dragIndex = index;
+        startX = event.touches[0].clientX;
+        startY = event.touches[0].clientY;
+        startPhotoX = state[index].x;
+        startPhotoY = state[index].y;
+    }
+
+    if(event.touches.length === 2){
+        dragIndex = index;
+
+        touchStartDistance = getDistance(event.touches[0], event.touches[1]);
+        touchStartScale = state[index].scale;
+
+        const center = getCenter(event.touches[0], event.touches[1]);
+
+        touchStartCenterX = center.x;
+        touchStartCenterY = center.y;
+        touchStartPhotoX = state[index].x;
+        touchStartPhotoY = state[index].y;
+    }
+}
+
+function moveTouch(event,index){
+    event.preventDefault();
+
+    if(dragIndex === null) return;
+
+    if(event.touches.length === 1){
+        const dx = event.touches[0].clientX - startX;
+        const dy = event.touches[0].clientY - startY;
+
+        state[index].x = startPhotoX + dx;
+        state[index].y = startPhotoY + dy;
+    }
+
+    if(event.touches.length === 2){
+        const newDistance = getDistance(event.touches[0], event.touches[1]);
+        const scaleRatio = newDistance / touchStartDistance;
+
+        state[index].scale = touchStartScale * scaleRatio;
+
+        if(state[index].scale < 0.4) state[index].scale = 0.4;
+        if(state[index].scale > 5) state[index].scale = 5;
+
+        const center = getCenter(event.touches[0], event.touches[1]);
+
+        state[index].x = touchStartPhotoX + (center.x - touchStartCenterX);
+        state[index].y = touchStartPhotoY + (center.y - touchStartCenterY);
+    }
+
+    applyTransform(index);
+}
+
+function endTouch(){
+    dragIndex = null;
+}
+
 function updateText(){
     document.getElementById("nameText").innerText =
         document.getElementById("nameInput").value;
@@ -326,7 +403,7 @@ for(let i=0; i<4; i++){
 
     img.addEventListener("wheel", function(e){
         zoomPhoto(e,i);
-    });
+    }, {passive:false});
 
     img.addEventListener("mousedown", function(e){
         startDrag(e,i);
@@ -335,6 +412,16 @@ for(let i=0; i<4; i++){
     img.addEventListener("dblclick", function(){
         resetPhoto(i);
     });
+
+    img.addEventListener("touchstart", function(e){
+        startTouch(e,i);
+    }, {passive:false});
+
+    img.addEventListener("touchmove", function(e){
+        moveTouch(e,i);
+    }, {passive:false});
+
+    img.addEventListener("touchend", endTouch);
 }
 
 document.addEventListener("mousemove", moveDrag);
