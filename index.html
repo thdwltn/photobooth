@@ -1,185 +1,264 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<title>PhotoBooth</title>
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Life4Cut</title>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-
 body{
-    background:#888;
+    background:#8f8f8f;
     min-height:100vh;
     display:flex;
     justify-content:center;
     align-items:flex-start;
-    gap:30px;
-    padding:30px;
-    font-family:Arial, sans-serif;
+    gap:32px;
+    padding:36px;
+    font-family:Arial,'Noto Sans KR',sans-serif;
 }
-
 .panel{
-    background:white;
-    padding:20px;
     width:280px;
-    border-radius:12px;
+    background:#fff;
+    border-radius:14px;
+    padding:20px;
+    box-shadow:0 15px 35px rgba(0,0,0,.18);
+    position:sticky;
+    top:24px;
 }
-
-.panel h2{
-    font-size:20px;
-    margin-bottom:15px;
-}
-
-.panel input,
-.panel select,
-.panel button{
+.panel h2{font-size:22px;margin-bottom:18px}
+.label{font-size:13px;font-weight:700;margin:12px 0 6px;color:#333}
+.panel input,.panel select,.panel button{
     width:100%;
-    margin-bottom:12px;
     padding:10px;
     font-size:15px;
+    margin-bottom:10px;
 }
-
 .panel button{
-    background:#111;
-    color:white;
     border:none;
+    background:#111;
+    color:#fff;
     cursor:pointer;
+    height:44px;
 }
-
+.panel button:hover{background:#333}
+.help{font-size:12px;color:#666;line-height:1.5;margin-top:6px}
+.stage{display:flex;flex-direction:column;align-items:center;gap:18px}
 .frame{
     width:360px;
-    height:1080px;
     background:#111;
     padding:14px;
     box-shadow:0 25px 60px rgba(0,0,0,.45);
 }
-
-.photo{
+.slot{
     width:100%;
-    height:245px;
-    object-fit:cover;
-    display:block;
+    height:230px;
     margin-bottom:10px;
-    background:#333;
+    background:#2d2d2d;
+    overflow:hidden;
+    position:relative;
+    cursor:grab;
 }
-
+.slot:active{cursor:grabbing}
+.slot img{
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%) scale(1);
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    user-select:none;
+    pointer-events:none;
+}
+.placeholder{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#aaa;
+    font-size:14px;
+}
 .footer{
     color:white;
     text-align:center;
     padding-top:12px;
-    line-height:30px;
+    padding-bottom:10px;
+    line-height:28px;
 }
-
-.date{
-    font-size:18px;
-    letter-spacing:2px;
-}
-
-.name{
-    font-size:18px;
-}
-
-@media(max-width:800px){
-    body{
-        flex-direction:column;
-        align-items:center;
-    }
+.date{font-size:18px;font-weight:700;letter-spacing:2px}
+.name{font-size:18px;font-weight:700;word-break:break-word}
+.hidden{display:none}
+@media(max-width:820px){
+    body{flex-direction:column;align-items:center;padding:18px;gap:20px}
+    .panel{position:static;width:100%;max-width:360px}
+    .frame{width:360px;max-width:100%}
 }
 </style>
 </head>
-
 <body>
 
 <div class="panel">
     <h2>인생네컷 만들기</h2>
 
-    <input type="file" accept="image/*" onchange="loadPhoto(event, 0)">
-    <input type="file" accept="image/*" onchange="loadPhoto(event, 1)">
-    <input type="file" accept="image/*" onchange="loadPhoto(event, 2)">
-    <input type="file" accept="image/*" onchange="loadPhoto(event, 3)">
+    <div class="label">사진 선택</div>
+    <input type="file" accept="image/*" onchange="loadPhoto(event,0)">
+    <input type="file" accept="image/*" onchange="loadPhoto(event,1)">
+    <input type="file" accept="image/*" onchange="loadPhoto(event,2)">
+    <input type="file" accept="image/*" onchange="loadPhoto(event,3)">
 
-    <input type="text" id="nameInput" placeholder="문구 입력" value="곽승윤조" oninput="updateText()">
+    <div class="label">문구</div>
+    <input type="text" id="nameInput" value="곽승윤조" oninput="updateText()">
 
+    <div class="label">프레임 색상</div>
     <select id="colorSelect" onchange="changeColor()">
-        <option value="#111">검정 프레임</option>
+        <option value="#111111">검정 프레임</option>
         <option value="#ffffff">흰색 프레임</option>
         <option value="#f8c8dc">핑크 프레임</option>
         <option value="#bde0fe">하늘색 프레임</option>
+        <option value="#001f5b">남색 프레임</option>
     </select>
 
     <button onclick="saveImage()">PNG 저장</button>
+    <div class="help">사진을 드래그하면 위치 조절 가능<br>마우스 휠로 확대/축소 가능</div>
 </div>
 
-<div class="frame" id="photoFrame">
-    <img class="photo" id="photo0">
-    <img class="photo" id="photo1">
-    <img class="photo" id="photo2">
-    <img class="photo" id="photo3">
+<div class="stage">
+    <div class="frame" id="photoFrame">
+        <div class="slot" data-index="0"><div class="placeholder">사진 1</div></div>
+        <div class="slot" data-index="1"><div class="placeholder">사진 2</div></div>
+        <div class="slot" data-index="2"><div class="placeholder">사진 3</div></div>
+        <div class="slot" data-index="3"><div class="placeholder">사진 4</div></div>
 
-    <div class="footer" id="footer">
-        <div class="date" id="dateText"></div>
-        <div class="name" id="nameText">곽승윤조</div>
+        <div class="footer" id="footer">
+            <div class="date" id="dateText"></div>
+            <div class="name" id="nameText">곽승윤조</div>
+        </div>
     </div>
 </div>
 
 <script>
-function loadPhoto(event, index){
+const state = [
+    {x:0,y:0,scale:1,img:null},
+    {x:0,y:0,scale:1,img:null},
+    {x:0,y:0,scale:1,img:null},
+    {x:0,y:0,scale:1,img:null}
+];
+
+function loadPhoto(event,index){
     const file = event.target.files[0];
     if(!file) return;
-
     const reader = new FileReader();
-
-    reader.onload = function(e){
-        document.getElementById("photo" + index).src = e.target.result;
+    reader.onload = e => {
+        const slot = document.querySelector(`.slot[data-index="${index}"]`);
+        slot.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        slot.appendChild(img);
+        state[index] = {x:0,y:0,scale:1,img};
+        applyTransform(index);
     };
-
     reader.readAsDataURL(file);
 }
 
+function applyTransform(index){
+    const s = state[index];
+    if(!s.img) return;
+    s.img.style.transform = `translate(calc(-50% + ${s.x}px), calc(-50% + ${s.y}px)) scale(${s.scale})`;
+}
+
+let dragging = false;
+let currentIndex = null;
+let startX = 0, startY = 0, baseX = 0, baseY = 0;
+
+document.querySelectorAll('.slot').forEach(slot=>{
+    slot.addEventListener('mousedown', e=>{
+        const index = Number(slot.dataset.index);
+        if(!state[index].img) return;
+        dragging = true;
+        currentIndex = index;
+        startX = e.clientX;
+        startY = e.clientY;
+        baseX = state[index].x;
+        baseY = state[index].y;
+    });
+
+    slot.addEventListener('wheel', e=>{
+        const index = Number(slot.dataset.index);
+        if(!state[index].img) return;
+        e.preventDefault();
+        const delta = e.deltaY < 0 ? 0.08 : -0.08;
+        state[index].scale = Math.min(3, Math.max(0.6, state[index].scale + delta));
+        applyTransform(index);
+    }, {passive:false});
+
+    slot.addEventListener('touchstart', e=>{
+        const index = Number(slot.dataset.index);
+        if(!state[index].img) return;
+        dragging = true;
+        currentIndex = index;
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        baseX = state[index].x;
+        baseY = state[index].y;
+    }, {passive:true});
+});
+
+document.addEventListener('mousemove', e=>{
+    if(!dragging || currentIndex === null) return;
+    state[currentIndex].x = baseX + (e.clientX - startX);
+    state[currentIndex].y = baseY + (e.clientY - startY);
+    applyTransform(currentIndex);
+});
+
+document.addEventListener('mouseup', ()=>{dragging=false;currentIndex=null});
+
+document.addEventListener('touchmove', e=>{
+    if(!dragging || currentIndex === null) return;
+    state[currentIndex].x = baseX + (e.touches[0].clientX - startX);
+    state[currentIndex].y = baseY + (e.touches[0].clientY - startY);
+    applyTransform(currentIndex);
+}, {passive:true});
+
+document.addEventListener('touchend', ()=>{dragging=false;currentIndex=null});
+
 function updateText(){
-    document.getElementById("nameText").innerText =
-        document.getElementById("nameInput").value;
+    document.getElementById('nameText').innerText = document.getElementById('nameInput').value;
 }
 
 function changeColor(){
-    const color = document.getElementById("colorSelect").value;
-    const frame = document.getElementById("photoFrame");
-    const footer = document.getElementById("footer");
-
+    const color = document.getElementById('colorSelect').value;
+    const frame = document.getElementById('photoFrame');
+    const footer = document.getElementById('footer');
     frame.style.background = color;
-
-    if(color === "#ffffff" || color === "#f8c8dc" || color === "#bde0fe"){
-        footer.style.color = "#111";
-    }else{
-        footer.style.color = "white";
-    }
+    footer.style.color = ['#ffffff','#f8c8dc','#bde0fe'].includes(color) ? '#111' : '#fff';
 }
 
 function setToday(){
     const today = new Date();
     const y = today.getFullYear();
-    const m = String(today.getMonth() + 1).padStart(2, "0");
-    const d = String(today.getDate()).padStart(2, "0");
-
-    document.getElementById("dateText").innerText = `${y}.${m}.${d}`;
+    const m = String(today.getMonth()+1).padStart(2,'0');
+    const d = String(today.getDate()).padStart(2,'0');
+    document.getElementById('dateText').innerText = `${y}.${m}.${d}`;
 }
 
 function saveImage(){
-    html2canvas(document.querySelector("#photoFrame"), {
+    updateText();
+    html2canvas(document.querySelector('#photoFrame'),{
         scale:3,
+        backgroundColor:null,
         useCORS:true
-    }).then(function(canvas){
-        const link = document.createElement("a");
-        link.download = "Life4Cut.png";
-        link.href = canvas.toDataURL("image/png");
+    }).then(canvas=>{
+        const link = document.createElement('a');
+        link.download = 'Life4Cut.png';
+        link.href = canvas.toDataURL('image/png');
         link.click();
     });
 }
 
 setToday();
+changeColor();
 </script>
-
 </body>
 </html>
