@@ -112,12 +112,15 @@ body{
     box-shadow:0 25px 60px rgba(0,0,0,.45);
     position:relative;
     overflow:hidden;
+    color:white;
 }
 
 .photoArea{
     display:flex;
     flex-direction:column;
     gap:10px;
+    position:relative;
+    z-index:2;
 }
 
 .photoBox{
@@ -202,7 +205,7 @@ body{
     margin-bottom:8px;
 }
 
-/* Frame Color */
+/* Frame Color / Theme */
 .color-black{
     background:#111;
     color:white;
@@ -226,6 +229,59 @@ body{
 .color-purple{
     background:#d9c8ff;
     color:#111;
+}
+
+.color-pokemon{
+    background-image:url("background.jpg");
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+    color:#111;
+    padding:58px 34px 28px;
+}
+
+.color-pokemon .photoArea{
+    gap:14px;
+}
+
+.color-pokemon .photoBox{
+    background:rgba(255,255,255,.85);
+    border:5px solid white;
+    box-shadow:0 5px 12px rgba(0,0,0,.18);
+}
+
+.color-pokemon .footer{
+    background:rgba(255,255,255,.72);
+    border-radius:14px;
+    margin-top:12px;
+    padding:10px;
+    color:#111;
+    backdrop-filter:blur(3px);
+}
+
+/* pokemon + grid */
+.color-pokemon.layout-grid{
+    width:430px;
+    padding:70px 34px 30px;
+}
+
+.color-pokemon.layout-grid .photoArea{
+    gap:12px;
+}
+
+.color-pokemon.layout-grid .photoBox{
+    height:235px;
+}
+
+/* pokemon + haru */
+.color-pokemon.layout-haru{
+    padding:70px 34px 30px;
+    border-radius:0;
+}
+
+.color-pokemon.layout-haru .photoBox{
+    height:210px;
+    border-radius:20px;
 }
 
 /* Photo Effects */
@@ -259,10 +315,10 @@ body{
     inset:0;
     pointer-events:none;
     opacity:.08;
-    background-image:
-        radial-gradient(circle, #fff 1px, transparent 1px);
+    background-image:radial-gradient(circle,#fff 1px,transparent 1px);
     background-size:4px 4px;
     mix-blend-mode:overlay;
+    z-index:4;
 }
 
 @media(max-width:600px){
@@ -299,6 +355,19 @@ body{
 
     .photoBox{
         height:220px;
+    }
+
+    .color-pokemon{
+        padding:54px 30px 26px;
+    }
+
+    .color-pokemon.layout-grid{
+        width:360px;
+        padding:64px 28px 28px;
+    }
+
+    .color-pokemon.layout-grid .photoBox{
+        height:190px;
     }
 }
 </style>
@@ -344,6 +413,7 @@ body{
         <option value="pink">핑크</option>
         <option value="sky">하늘</option>
         <option value="purple">퍼플</option>
+        <option value="pokemon">포켓몬 핑크 배경</option>
     </select>
 
     <select id="effectSelect" onchange="changeEffect()">
@@ -531,8 +601,10 @@ function changeColor(){
     const frame=document.getElementById("photoFrame");
     const color=document.getElementById("colorSelect").value;
 
-    frame.classList.remove("color-black","color-white","color-pink","color-sky","color-purple");
+    frame.classList.remove("color-black","color-white","color-pink","color-sky","color-purple","color-pokemon");
     frame.classList.add("color-"+color);
+
+    setTimeout(resetAllLoaded,100);
 }
 
 function changeEffect(){
