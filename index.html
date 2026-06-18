@@ -80,9 +80,7 @@ body{
     text-align:center;
 }
 
-.orderBox{
-    margin:14px 0;
-}
+.orderBox{margin:14px 0}
 
 .orderItem{
     background:#f1f5f9;
@@ -177,9 +175,7 @@ body{
     gap:10px;
 }
 
-.frame.layout-grid .photoBox{
-    height:260px;
-}
+.frame.layout-grid .photoBox{height:260px}
 
 .frame.layout-haru{
     width:380px;
@@ -187,9 +183,7 @@ body{
     border-radius:22px;
 }
 
-.frame.layout-haru .photoArea{
-    gap:12px;
-}
+.frame.layout-haru .photoArea{gap:12px}
 
 .frame.layout-haru .photoBox{
     height:220px;
@@ -205,34 +199,15 @@ body{
     margin-bottom:8px;
 }
 
-/* Frame Color / Theme */
-.color-black{
-    background:#111;
-    color:white;
-}
+/* Color */
+.color-black{background:#111;color:white}
+.color-white{background:#fff;color:#111}
+.color-pink{background:#ffd6e8;color:#111}
+.color-sky{background:#cdeeff;color:#111}
+.color-purple{background:#d9c8ff;color:#111}
 
-.color-white{
-    background:#fff;
-    color:#111;
-}
-
-.color-pink{
-    background:#ffd6e8;
-    color:#111;
-}
-
-.color-sky{
-    background:#cdeeff;
-    color:#111;
-}
-
-.color-purple{
-    background:#d9c8ff;
-    color:#111;
-}
-
-.color-pokemon{
-    background-image:url("background.jpg");
+/* Background Theme */
+.color-bg{
     background-size:cover;
     background-position:center;
     background-repeat:no-repeat;
@@ -240,17 +215,15 @@ body{
     padding:58px 34px 28px;
 }
 
-.color-pokemon .photoArea{
-    gap:14px;
-}
+.color-bg .photoArea{gap:14px}
 
-.color-pokemon .photoBox{
+.color-bg .photoBox{
     background:rgba(255,255,255,.85);
     border:5px solid white;
     box-shadow:0 5px 12px rgba(0,0,0,.18);
 }
 
-.color-pokemon .footer{
+.color-bg .footer{
     background:rgba(255,255,255,.72);
     border-radius:14px;
     margin-top:12px;
@@ -259,55 +232,30 @@ body{
     backdrop-filter:blur(3px);
 }
 
-/* pokemon + grid */
-.color-pokemon.layout-grid{
+.color-bg.layout-grid{
     width:430px;
     padding:70px 34px 30px;
 }
 
-.color-pokemon.layout-grid .photoArea{
-    gap:12px;
-}
+.color-bg.layout-grid .photoBox{height:235px}
 
-.color-pokemon.layout-grid .photoBox{
-    height:235px;
-}
-
-/* pokemon + haru */
-.color-pokemon.layout-haru{
+.color-bg.layout-haru{
     padding:70px 34px 30px;
     border-radius:0;
 }
 
-.color-pokemon.layout-haru .photoBox{
+.color-bg.layout-haru .photoBox{
     height:210px;
     border-radius:20px;
 }
 
 /* Photo Effects */
-.effect-normal .photo{
-    filter:none;
-}
-
-.effect-film .photo{
-    filter:contrast(1.14) saturate(.82) sepia(.20) brightness(.96);
-}
-
-.effect-vintage .photo{
-    filter:sepia(.35) contrast(1.05) brightness(.95) saturate(.82);
-}
-
-.effect-bw .photo{
-    filter:grayscale(1) contrast(1.12);
-}
-
-.effect-warm .photo{
-    filter:sepia(.18) saturate(1.18) brightness(1.03);
-}
-
-.effect-cool .photo{
-    filter:contrast(1.05) saturate(.92) hue-rotate(8deg) brightness(1.04);
-}
+.effect-normal .photo{filter:none}
+.effect-film .photo{filter:contrast(1.14) saturate(.82) sepia(.20) brightness(.96)}
+.effect-vintage .photo{filter:sepia(.35) contrast(1.05) brightness(.95) saturate(.82)}
+.effect-bw .photo{filter:grayscale(1) contrast(1.12)}
+.effect-warm .photo{filter:sepia(.18) saturate(1.18) brightness(1.03)}
+.effect-cool .photo{filter:contrast(1.05) saturate(.92) hue-rotate(8deg) brightness(1.04)}
 
 .effect-film::after{
     content:"";
@@ -322,53 +270,20 @@ body{
 }
 
 @media(max-width:600px){
-    body{
-        padding:14px;
-        gap:18px;
-    }
-
-    .panel{
-        padding:18px;
-    }
-
-    .uploadBtn{
-        padding:17px;
-        font-size:17px;
-    }
-
-    .saveBtn{
-        padding:20px;
-        font-size:20px;
-    }
-
-    .frame{
-        width:360px;
-    }
-
-    .frame.layout-grid{
-        width:360px;
-    }
-
-    .frame.layout-grid .photoBox{
-        height:210px;
-    }
-
-    .photoBox{
-        height:220px;
-    }
-
-    .color-pokemon{
-        padding:54px 30px 26px;
-    }
-
-    .color-pokemon.layout-grid{
+    body{padding:14px;gap:18px}
+    .panel{padding:18px}
+    .uploadBtn{padding:17px;font-size:17px}
+    .saveBtn{padding:20px;font-size:20px}
+    .frame{width:360px}
+    .frame.layout-grid{width:360px}
+    .frame.layout-grid .photoBox{height:210px}
+    .photoBox{height:220px}
+    .color-bg{padding:54px 30px 26px}
+    .color-bg.layout-grid{
         width:360px;
         padding:64px 28px 28px;
     }
-
-    .color-pokemon.layout-grid .photoBox{
-        height:190px;
-    }
+    .color-bg.layout-grid .photoBox{height:190px}
 }
 </style>
 </head>
@@ -413,7 +328,13 @@ body{
         <option value="pink">핑크</option>
         <option value="sky">하늘</option>
         <option value="purple">퍼플</option>
-        <option value="pokemon">포켓몬 핑크 배경</option>
+        <option value="bg1">테마 1</option>
+        <option value="bg2">테마 2</option>
+        <option value="bg3">테마 3</option>
+        <option value="bg4">테마 4</option>
+        <option value="bg5">테마 5</option>
+        <option value="bg6">테마 6</option>
+        <option value="bg7">테마 7</option>
     </select>
 
     <select id="effectSelect" onchange="changeEffect()">
@@ -443,6 +364,16 @@ body{
 </div>
 
 <script>
+const backgrounds = {
+    bg1:"background1.jpg",
+    bg2:"background2.jpg",
+    bg3:"background3.jpg",
+    bg4:"background4.jpg",
+    bg5:"background5.jpg",
+    bg6:"background6.jpg",
+    bg7:"background7.jpg"
+};
+
 const state=[
     {scale:1,x:0,y:0,baseW:0,baseH:0},
     {scale:1,x:0,y:0,baseW:0,baseH:0},
@@ -460,7 +391,7 @@ function loadPhoto(event,index){
     const reader=new FileReader();
     reader.onload=function(e){
         const img=document.getElementById("photo"+index);
-        img.onload=function(){resetPhoto(index);}
+        img.onload=function(){resetPhoto(index)}
         img.src=e.target.result;
         updateOrder();
     };
@@ -522,7 +453,7 @@ function moveDrag(e){
     applyTransform(dragIndex);
 }
 
-function endDrag(){dragIndex=null;}
+function endDrag(){dragIndex=null}
 
 function getDistance(t1,t2){
     return Math.hypot(t1.clientX-t2.clientX,t1.clientY-t2.clientY);
@@ -549,7 +480,6 @@ function startTouch(e,index){
     if(e.touches.length===2){
         touchStartDistance=getDistance(e.touches[0],e.touches[1]);
         touchStartScale=state[index].scale;
-
         const c=getCenter(e.touches[0],e.touches[1]);
         touchStartCenterX=c.x;
         touchStartCenterY=c.y;
@@ -599,10 +529,28 @@ function changeLayout(){
 
 function changeColor(){
     const frame=document.getElementById("photoFrame");
-    const color=document.getElementById("colorSelect").value;
+    const value=document.getElementById("colorSelect").value;
 
-    frame.classList.remove("color-black","color-white","color-pink","color-sky","color-purple","color-pokemon");
-    frame.classList.add("color-"+color);
+    frame.classList.remove(
+        "color-black",
+        "color-white",
+        "color-pink",
+        "color-sky",
+        "color-purple",
+        "color-bg"
+    );
+
+    frame.style.backgroundImage="";
+
+    if(value==="black") frame.classList.add("color-black");
+    else if(value==="white") frame.classList.add("color-white");
+    else if(value==="pink") frame.classList.add("color-pink");
+    else if(value==="sky") frame.classList.add("color-sky");
+    else if(value==="purple") frame.classList.add("color-purple");
+    else if(backgrounds[value]){
+        frame.classList.add("color-bg");
+        frame.style.backgroundImage=`url('${backgrounds[value]}')`;
+    }
 
     setTimeout(resetAllLoaded,100);
 }
