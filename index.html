@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Life4Cut</title>
+<title>Jisoo 4Cut</title>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <style>
@@ -104,7 +104,6 @@ body{
     cursor:pointer;
 }
 
-/* FRAME BASE */
 .frame{
     width:380px;
     max-width:96%;
@@ -144,7 +143,6 @@ body{
 }
 
 .footer{
-    color:white;
     text-align:center;
     padding-top:14px;
     padding-bottom:8px;
@@ -164,7 +162,7 @@ body{
     font-weight:bold;
 }
 
-/* 2x2 LAYOUT */
+/* Layout */
 .frame.layout-grid{
     width:430px;
     padding:18px;
@@ -180,112 +178,91 @@ body{
     height:260px;
 }
 
-.frame.layout-grid .footer{
-    padding-top:16px;
+.frame.layout-haru{
+    width:380px;
+    padding:20px;
+    border-radius:22px;
 }
 
-/* CLASSIC */
-.theme-classic{
+.frame.layout-haru .photoArea{
+    gap:12px;
+}
+
+.frame.layout-haru .photoBox{
+    height:220px;
+    border-radius:22px;
+}
+
+.frame.layout-haru .footer::before{
+    content:"HARU FILM";
+    display:block;
+    font-size:20px;
+    font-weight:bold;
+    letter-spacing:3px;
+    margin-bottom:8px;
+}
+
+/* Frame Color */
+.color-black{
     background:#111;
+    color:white;
 }
 
-/* FILM */
-.theme-film{
-    background:#050505;
-    padding:28px 18px 18px;
+.color-white{
+    background:#fff;
+    color:#111;
 }
 
-.theme-film::before,
-.theme-film::after{
-    content:"";
-    position:absolute;
-    top:0;
-    bottom:0;
-    width:12px;
-    background:repeating-linear-gradient(
-        to bottom,
-        #f2f2f2 0 8px,
-        transparent 8px 24px
-    );
-    opacity:.85;
+.color-pink{
+    background:#ffd6e8;
+    color:#111;
 }
 
-.theme-film::before{left:4px}
-.theme-film::after{right:4px}
-
-.theme-film .photoBox{
-    border:1px solid #222;
+.color-sky{
+    background:#cdeeff;
+    color:#111;
 }
 
-.theme-film .footer::before{
-    content:"KEEP YOURSELF ALIVE      PHOTOISM      KEEP YOURSELF ALIVE";
-    display:block;
-    font-size:8px;
-    letter-spacing:1px;
-    margin-bottom:6px;
-    color:#eee;
+.color-purple{
+    background:#d9c8ff;
+    color:#111;
 }
 
-.theme-film .footer::after{
-    content:"52        PHOTOISM        53";
-    display:block;
-    font-size:8px;
-    letter-spacing:2px;
-    margin-top:4px;
-    color:#eee;
+/* Photo Effects */
+.effect-normal .photo{
+    filter:none;
 }
 
-/* POLAROID */
-.theme-polaroid{
-    background:#f9f6ee;
-    padding:18px 18px 36px;
-    box-shadow:0 25px 60px rgba(0,0,0,.35);
+.effect-film .photo{
+    filter:contrast(1.14) saturate(.82) sepia(.20) brightness(.96);
 }
 
-.theme-polaroid .photoArea{
-    gap:14px;
+.effect-vintage .photo{
+    filter:sepia(.35) contrast(1.05) brightness(.95) saturate(.82);
 }
 
-.theme-polaroid .photoBox{
-    background:white;
-    border:8px solid white;
-    box-shadow:0 6px 14px rgba(0,0,0,.12);
+.effect-bw .photo{
+    filter:grayscale(1) contrast(1.12);
 }
 
-.theme-polaroid .footer{
-    color:#222 !important;
-    font-family:"Comic Sans MS", Arial, sans-serif;
+.effect-warm .photo{
+    filter:sepia(.18) saturate(1.18) brightness(1.03);
 }
 
-/* GLASS */
-.theme-glass{
-    background:rgba(255,255,255,.18);
-    backdrop-filter:blur(14px);
-    -webkit-backdrop-filter:blur(14px);
-    border:1px solid rgba(255,255,255,.35);
-    box-shadow:0 25px 60px rgba(0,0,0,.35);
+.effect-cool .photo{
+    filter:contrast(1.05) saturate(.92) hue-rotate(8deg) brightness(1.04);
 }
 
-.theme-glass::before{
+.effect-film::after{
     content:"";
     position:absolute;
     inset:0;
-    background:linear-gradient(135deg,rgba(255,255,255,.35),rgba(255,255,255,0));
     pointer-events:none;
-}
-
-.theme-glass .photoBox{
-    border:1px solid rgba(255,255,255,.45);
-}
-
-.theme-glass .footer{
-    color:white;
-    text-shadow:0 2px 6px rgba(0,0,0,.45);
-}
-
-/* LIGHT TEXT */
-.lightText .footer{
-    color:#111 !important;
+    opacity:.08;
+    background-image:
+        radial-gradient(circle, #fff 1px, transparent 1px);
+    background-size:4px 4px;
+    mix-blend-mode:overlay;
 }
 
 @media(max-width:600px){
@@ -358,19 +335,30 @@ body{
     <select id="layoutSelect" onchange="changeLayout()">
         <option value="vertical">세로 4컷</option>
         <option value="grid">2x2 포토이즘 스타일</option>
+        <option value="haru">하루필름 스타일</option>
     </select>
 
-    <select id="themeSelect" onchange="changeTheme()">
-        <option value="classic">Classic</option>
-        <option value="film">🎞 Film</option>
-        <option value="polaroid">📸 Polaroid</option>
-        <option value="glass">✨ Glass</option>
+    <select id="colorSelect" onchange="changeColor()">
+        <option value="black">검정</option>
+        <option value="white">화이트</option>
+        <option value="pink">핑크</option>
+        <option value="sky">하늘</option>
+        <option value="purple">퍼플</option>
+    </select>
+
+    <select id="effectSelect" onchange="changeEffect()">
+        <option value="normal">사진 효과 없음</option>
+        <option value="film">필름카메라</option>
+        <option value="vintage">빈티지</option>
+        <option value="bw">흑백</option>
+        <option value="warm">따뜻한 톤</option>
+        <option value="cool">차가운 톤</option>
     </select>
 
     <button class="saveBtn" onclick="saveImage()">💾 PNG 저장</button>
 </div>
 
-<div class="frame theme-classic" id="photoFrame">
+<div class="frame layout-vertical color-black effect-normal" id="photoFrame">
     <div class="photoArea" id="photoArea">
         <div class="photoBox" data-index="0"><img class="photo" id="photo0"></div>
         <div class="photoBox" data-index="1"><img class="photo" id="photo1"></div>
@@ -385,7 +373,7 @@ body{
 </div>
 
 <script>
-const state = [
+const state=[
     {scale:1,x:0,y:0,baseW:0,baseH:0},
     {scale:1,x:0,y:0,baseW:0,baseH:0},
     {scale:1,x:0,y:0,baseW:0,baseH:0},
@@ -412,10 +400,9 @@ function loadPhoto(event,index){
 function resetPhoto(index){
     const img=document.getElementById("photo"+index);
     const box=img.parentElement;
-
     if(!img.naturalWidth)return;
 
-    const ratio=Math.max(box.clientWidth/img.naturalWidth, box.clientHeight/img.naturalHeight);
+    const ratio=Math.max(box.clientWidth/img.naturalWidth,box.clientHeight/img.naturalHeight);
 
     state[index].baseW=img.naturalWidth*ratio;
     state[index].baseH=img.naturalHeight*ratio;
@@ -444,7 +431,7 @@ function applyTransform(index){
 
 function zoomPhoto(e,index){
     e.preventDefault();
-    state[index].scale += e.deltaY < 0 ? 0.08 : -0.08;
+    state[index].scale+=e.deltaY<0?.08:-.08;
     state[index].scale=Math.max(.4,Math.min(5,state[index].scale));
     applyTransform(index);
 }
@@ -492,6 +479,7 @@ function startTouch(e,index){
     if(e.touches.length===2){
         touchStartDistance=getDistance(e.touches[0],e.touches[1]);
         touchStartScale=state[index].scale;
+
         const c=getCenter(e.touches[0],e.touches[1]);
         touchStartCenterX=c.x;
         touchStartCenterY=c.y;
@@ -530,32 +518,29 @@ function changeLayout(){
     const frame=document.getElementById("photoFrame");
     const layout=document.getElementById("layoutSelect").value;
 
-    frame.classList.remove("layout-grid");
+    frame.classList.remove("layout-grid","layout-haru","layout-vertical");
 
-    if(layout==="grid"){
-        frame.classList.add("layout-grid");
-    }
+    if(layout==="grid") frame.classList.add("layout-grid");
+    else if(layout==="haru") frame.classList.add("layout-haru");
+    else frame.classList.add("layout-vertical");
 
     setTimeout(resetAllLoaded,100);
 }
 
-function changeTheme(){
+function changeColor(){
     const frame=document.getElementById("photoFrame");
-    const theme=document.getElementById("themeSelect").value;
+    const color=document.getElementById("colorSelect").value;
 
-    frame.className="frame";
+    frame.classList.remove("color-black","color-white","color-pink","color-sky","color-purple");
+    frame.classList.add("color-"+color);
+}
 
-    if(document.getElementById("layoutSelect").value==="grid"){
-        frame.classList.add("layout-grid");
-    }
+function changeEffect(){
+    const frame=document.getElementById("photoFrame");
+    const effect=document.getElementById("effectSelect").value;
 
-    frame.classList.add("theme-"+theme);
-
-    if(theme==="polaroid"){
-        frame.classList.add("lightText");
-    }
-
-    setTimeout(resetAllLoaded,100);
+    frame.classList.remove("effect-normal","effect-film","effect-vintage","effect-bw","effect-warm","effect-cool");
+    frame.classList.add("effect-"+effect);
 }
 
 function setToday(){
@@ -573,7 +558,7 @@ function saveImage(){
         backgroundColor:null
     }).then(canvas=>{
         const link=document.createElement("a");
-        link.download="Life4Cut.png";
+        link.download="Jisoo4Cut.png";
         link.href=canvas.toDataURL("image/png");
         link.click();
     });
@@ -583,13 +568,10 @@ function movePhotoBox(from,to){
     const area=document.getElementById("photoArea");
     const boxes=[...area.querySelectorAll(".photoBox")];
 
-    if(to<0 || to>=boxes.length)return;
+    if(to<0||to>=boxes.length)return;
 
-    if(from<to){
-        area.insertBefore(boxes[from], boxes[to].nextSibling);
-    }else{
-        area.insertBefore(boxes[from], boxes[to]);
-    }
+    if(from<to) area.insertBefore(boxes[from],boxes[to].nextSibling);
+    else area.insertBefore(boxes[from],boxes[to]);
 
     updateOrder();
 }
