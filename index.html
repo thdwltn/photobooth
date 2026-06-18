@@ -10,19 +10,19 @@
 *{box-sizing:border-box;margin:0;padding:0}
 
 body{
-    background:#888;
+    background:#8c8c8c;
     min-height:100vh;
     display:flex;
     flex-direction:column;
     align-items:center;
-    gap:25px;
+    gap:24px;
     padding:24px;
     font-family:Arial,sans-serif;
 }
 
 .panel{
     background:white;
-    width:380px;
+    width:390px;
     max-width:96%;
     padding:22px;
     border-radius:18px;
@@ -30,9 +30,9 @@ body{
 }
 
 .panel h2{
-    font-size:24px;
-    margin-bottom:18px;
     text-align:center;
+    margin-bottom:18px;
+    font-size:24px;
 }
 
 .uploadBtn{
@@ -48,33 +48,7 @@ body{
     cursor:pointer;
 }
 
-.uploadBtn input{
-    display:none;
-}
-
-.orderBox{
-    margin:14px 0;
-}
-
-.orderItem{
-    background:#f1f5f9;
-    padding:12px;
-    border-radius:10px;
-    margin-bottom:8px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    cursor:grab;
-}
-
-.orderItem button{
-    padding:8px 10px;
-    border:none;
-    border-radius:8px;
-    background:#111;
-    color:white;
-    cursor:pointer;
-}
+.uploadBtn input{display:none}
 
 .panel input[type="text"],
 .panel select{
@@ -96,7 +70,6 @@ body{
     border:none;
     border-radius:14px;
     cursor:pointer;
-    box-shadow:0 8px 20px rgba(255,59,48,.35);
 }
 
 .tip{
@@ -107,19 +80,51 @@ body{
     text-align:center;
 }
 
+.orderBox{
+    margin:14px 0;
+}
+
+.orderItem{
+    background:#f1f5f9;
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:8px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    cursor:grab;
+}
+
+.orderItem button{
+    padding:7px 10px;
+    border:none;
+    border-radius:8px;
+    background:#111;
+    color:white;
+    cursor:pointer;
+}
+
+/* FRAME BASE */
 .frame{
-    width:360px;
+    width:380px;
     max-width:96%;
     background:#111;
     padding:14px;
     box-shadow:0 25px 60px rgba(0,0,0,.45);
+    position:relative;
+    overflow:hidden;
+}
+
+.photoArea{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
 }
 
 .photoBox{
     width:100%;
     height:230px;
     overflow:hidden;
-    margin-bottom:10px;
     background:#333;
     position:relative;
     touch-action:none;
@@ -141,9 +146,11 @@ body{
 .footer{
     color:white;
     text-align:center;
-    padding-top:12px;
-    padding-bottom:10px;
+    padding-top:14px;
+    padding-bottom:8px;
     line-height:28px;
+    position:relative;
+    z-index:3;
 }
 
 .date{
@@ -155,6 +162,130 @@ body{
 .name{
     font-size:18px;
     font-weight:bold;
+}
+
+/* 2x2 LAYOUT */
+.frame.layout-grid{
+    width:430px;
+    padding:18px;
+}
+
+.frame.layout-grid .photoArea{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.frame.layout-grid .photoBox{
+    height:260px;
+}
+
+.frame.layout-grid .footer{
+    padding-top:16px;
+}
+
+/* CLASSIC */
+.theme-classic{
+    background:#111;
+}
+
+/* FILM */
+.theme-film{
+    background:#050505;
+    padding:28px 18px 18px;
+}
+
+.theme-film::before,
+.theme-film::after{
+    content:"";
+    position:absolute;
+    top:0;
+    bottom:0;
+    width:12px;
+    background:repeating-linear-gradient(
+        to bottom,
+        #f2f2f2 0 8px,
+        transparent 8px 24px
+    );
+    opacity:.85;
+}
+
+.theme-film::before{left:4px}
+.theme-film::after{right:4px}
+
+.theme-film .photoBox{
+    border:1px solid #222;
+}
+
+.theme-film .footer::before{
+    content:"KEEP YOURSELF ALIVE      PHOTOISM      KEEP YOURSELF ALIVE";
+    display:block;
+    font-size:8px;
+    letter-spacing:1px;
+    margin-bottom:6px;
+    color:#eee;
+}
+
+.theme-film .footer::after{
+    content:"52        PHOTOISM        53";
+    display:block;
+    font-size:8px;
+    letter-spacing:2px;
+    margin-top:4px;
+    color:#eee;
+}
+
+/* POLAROID */
+.theme-polaroid{
+    background:#f9f6ee;
+    padding:18px 18px 36px;
+    box-shadow:0 25px 60px rgba(0,0,0,.35);
+}
+
+.theme-polaroid .photoArea{
+    gap:14px;
+}
+
+.theme-polaroid .photoBox{
+    background:white;
+    border:8px solid white;
+    box-shadow:0 6px 14px rgba(0,0,0,.12);
+}
+
+.theme-polaroid .footer{
+    color:#222 !important;
+    font-family:"Comic Sans MS", Arial, sans-serif;
+}
+
+/* GLASS */
+.theme-glass{
+    background:rgba(255,255,255,.18);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border:1px solid rgba(255,255,255,.35);
+    box-shadow:0 25px 60px rgba(0,0,0,.35);
+}
+
+.theme-glass::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(135deg,rgba(255,255,255,.35),rgba(255,255,255,0));
+    pointer-events:none;
+}
+
+.theme-glass .photoBox{
+    border:1px solid rgba(255,255,255,.45);
+}
+
+.theme-glass .footer{
+    color:white;
+    text-shadow:0 2px 6px rgba(0,0,0,.45);
+}
+
+/* LIGHT TEXT */
+.lightText .footer{
+    color:#111 !important;
 }
 
 @media(max-width:600px){
@@ -177,6 +308,18 @@ body{
         font-size:20px;
     }
 
+    .frame{
+        width:360px;
+    }
+
+    .frame.layout-grid{
+        width:360px;
+    }
+
+    .frame.layout-grid .photoBox{
+        height:210px;
+    }
+
     .photoBox{
         height:220px;
     }
@@ -187,7 +330,7 @@ body{
 <body>
 
 <div class="panel">
-    <h2>📷 인생네컷 만들기</h2>
+    <h2>📷 지수네컷 만들기</h2>
 
     <label class="uploadBtn">사진 1 선택
         <input type="file" accept="image/*" onchange="loadPhoto(event,0)">
@@ -212,21 +355,28 @@ body{
 
     <input type="text" id="nameInput" value="지수네컷" oninput="updateText()">
 
-    <select id="colorSelect" onchange="changeColor()">
-        <option value="#111">검정 프레임</option>
-        <option value="#ffffff">흰색 프레임</option>
-        <option value="#f8c8dc">핑크 프레임</option>
-        <option value="#bde0fe">하늘색 프레임</option>
+    <select id="layoutSelect" onchange="changeLayout()">
+        <option value="vertical">세로 4컷</option>
+        <option value="grid">2x2 포토이즘 스타일</option>
+    </select>
+
+    <select id="themeSelect" onchange="changeTheme()">
+        <option value="classic">Classic</option>
+        <option value="film">🎞 Film</option>
+        <option value="polaroid">📸 Polaroid</option>
+        <option value="glass">✨ Glass</option>
     </select>
 
     <button class="saveBtn" onclick="saveImage()">💾 PNG 저장</button>
 </div>
 
-<div class="frame" id="photoFrame">
-    <div class="photoBox" data-index="0"><img class="photo" id="photo0"></div>
-    <div class="photoBox" data-index="1"><img class="photo" id="photo1"></div>
-    <div class="photoBox" data-index="2"><img class="photo" id="photo2"></div>
-    <div class="photoBox" data-index="3"><img class="photo" id="photo3"></div>
+<div class="frame theme-classic" id="photoFrame">
+    <div class="photoArea" id="photoArea">
+        <div class="photoBox" data-index="0"><img class="photo" id="photo0"></div>
+        <div class="photoBox" data-index="1"><img class="photo" id="photo1"></div>
+        <div class="photoBox" data-index="2"><img class="photo" id="photo2"></div>
+        <div class="photoBox" data-index="3"><img class="photo" id="photo3"></div>
+    </div>
 
     <div class="footer" id="footer">
         <div class="date" id="dateText"></div>
@@ -248,6 +398,7 @@ let touchStartDistance=0,touchStartScale=1,touchStartCenterX=0,touchStartCenterY
 function loadPhoto(event,index){
     const file=event.target.files[0];
     if(!file)return;
+
     const reader=new FileReader();
     reader.onload=function(e){
         const img=document.getElementById("photo"+index);
@@ -261,6 +412,9 @@ function loadPhoto(event,index){
 function resetPhoto(index){
     const img=document.getElementById("photo"+index);
     const box=img.parentElement;
+
+    if(!img.naturalWidth)return;
+
     const ratio=Math.max(box.clientWidth/img.naturalWidth, box.clientHeight/img.naturalHeight);
 
     state[index].baseW=img.naturalWidth*ratio;
@@ -271,7 +425,15 @@ function resetPhoto(index){
 
     img.style.width=state[index].baseW+"px";
     img.style.height=state[index].baseH+"px";
+
     applyTransform(index);
+}
+
+function resetAllLoaded(){
+    for(let i=0;i<4;i++){
+        const img=document.getElementById("photo"+i);
+        if(img.src) resetPhoto(i);
+    }
 }
 
 function applyTransform(index){
@@ -310,7 +472,10 @@ function getDistance(t1,t2){
 }
 
 function getCenter(t1,t2){
-    return {x:(t1.clientX+t2.clientX)/2,y:(t1.clientY+t2.clientY)/2};
+    return {
+        x:(t1.clientX+t2.clientX)/2,
+        y:(t1.clientY+t2.clientY)/2
+    };
 }
 
 function startTouch(e,index){
@@ -348,6 +513,7 @@ function moveTouch(e,index){
         const newDistance=getDistance(e.touches[0],e.touches[1]);
         state[index].scale=touchStartScale*(newDistance/touchStartDistance);
         state[index].scale=Math.max(.4,Math.min(5,state[index].scale));
+
         const c=getCenter(e.touches[0],e.touches[1]);
         state[index].x=touchStartPhotoX+(c.x-touchStartCenterX);
         state[index].y=touchStartPhotoY+(c.y-touchStartCenterY);
@@ -360,11 +526,36 @@ function updateText(){
     document.getElementById("nameText").innerText=document.getElementById("nameInput").value;
 }
 
-function changeColor(){
-    const color=document.getElementById("colorSelect").value;
-    document.getElementById("photoFrame").style.background=color;
-    document.getElementById("footer").style.color =
-        ["#ffffff","#f8c8dc","#bde0fe"].includes(color) ? "#111" : "white";
+function changeLayout(){
+    const frame=document.getElementById("photoFrame");
+    const layout=document.getElementById("layoutSelect").value;
+
+    frame.classList.remove("layout-grid");
+
+    if(layout==="grid"){
+        frame.classList.add("layout-grid");
+    }
+
+    setTimeout(resetAllLoaded,100);
+}
+
+function changeTheme(){
+    const frame=document.getElementById("photoFrame");
+    const theme=document.getElementById("themeSelect").value;
+
+    frame.className="frame";
+
+    if(document.getElementById("layoutSelect").value==="grid"){
+        frame.classList.add("layout-grid");
+    }
+
+    frame.classList.add("theme-"+theme);
+
+    if(theme==="polaroid"){
+        frame.classList.add("lightText");
+    }
+
+    setTimeout(resetAllLoaded,100);
 }
 
 function setToday(){
@@ -375,6 +566,7 @@ function setToday(){
 
 function saveImage(){
     updateText();
+
     html2canvas(document.querySelector("#photoFrame"),{
         scale:3,
         useCORS:true,
@@ -388,15 +580,15 @@ function saveImage(){
 }
 
 function movePhotoBox(from,to){
-    const frame=document.getElementById("photoFrame");
-    const boxes=[...frame.querySelectorAll(".photoBox")];
+    const area=document.getElementById("photoArea");
+    const boxes=[...area.querySelectorAll(".photoBox")];
 
     if(to<0 || to>=boxes.length)return;
 
     if(from<to){
-        frame.insertBefore(boxes[from], boxes[to].nextSibling);
+        area.insertBefore(boxes[from], boxes[to].nextSibling);
     }else{
-        frame.insertBefore(boxes[from], boxes[to]);
+        area.insertBefore(boxes[from], boxes[to]);
     }
 
     updateOrder();
@@ -411,6 +603,7 @@ function updateOrder(){
     boxes.forEach((box,pos)=>{
         const index=box.dataset.index;
         const item=document.createElement("div");
+
         item.className="orderItem";
         item.draggable=true;
         item.dataset.pos=pos;
@@ -437,13 +630,13 @@ function updateOrder(){
 
         item.addEventListener("touchstart",e=>{
             item.dataset.touchY=e.touches[0].clientY;
-            item.dataset.from=pos;
         },{passive:true});
 
         item.addEventListener("touchend",e=>{
             const startY=Number(item.dataset.touchY);
             const endY=e.changedTouches[0].clientY;
             const diff=endY-startY;
+
             if(diff>35) movePhotoBox(pos,pos+1);
             if(diff<-35) movePhotoBox(pos,pos-1);
         },{passive:true});
