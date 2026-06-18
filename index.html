@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Life4Cut</title>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
@@ -12,43 +13,103 @@ body{
     background:#888;
     min-height:100vh;
     display:flex;
-    justify-content:center;
-    align-items:flex-start;
-    gap:30px;
-    padding:30px;
+    flex-direction:column;
+    align-items:center;
+    gap:25px;
+    padding:24px;
     font-family:Arial,sans-serif;
 }
 
 .panel{
     background:white;
-    width:280px;
-    padding:20px;
-    border-radius:12px;
+    width:380px;
+    max-width:96%;
+    padding:22px;
+    border-radius:18px;
+    box-shadow:0 10px 30px rgba(0,0,0,.25);
 }
 
 .panel h2{
-    margin-bottom:15px;
-    font-size:22px;
+    font-size:24px;
+    margin-bottom:18px;
+    text-align:center;
 }
 
-.panel input,
-.panel select,
-.panel button{
+.uploadBtn{
+    display:block;
     width:100%;
-    margin-bottom:12px;
-    padding:10px;
-    font-size:15px;
+    background:#218bff;
+    color:white;
+    text-align:center;
+    padding:15px;
+    border-radius:12px;
+    margin-bottom:10px;
+    font-weight:bold;
+    cursor:pointer;
 }
 
-.panel button{
+.uploadBtn input{
+    display:none;
+}
+
+.orderBox{
+    margin:14px 0;
+}
+
+.orderItem{
+    background:#f1f5f9;
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:8px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    cursor:grab;
+}
+
+.orderItem button{
+    padding:8px 10px;
+    border:none;
+    border-radius:8px;
     background:#111;
     color:white;
-    border:none;
     cursor:pointer;
+}
+
+.panel input[type="text"],
+.panel select{
+    width:100%;
+    margin-bottom:12px;
+    padding:13px;
+    font-size:16px;
+    border:1px solid #ddd;
+    border-radius:10px;
+}
+
+.saveBtn{
+    width:100%;
+    padding:18px;
+    font-size:19px;
+    font-weight:bold;
+    background:#ff3b30;
+    color:white;
+    border:none;
+    border-radius:14px;
+    cursor:pointer;
+    box-shadow:0 8px 20px rgba(255,59,48,.35);
+}
+
+.tip{
+    font-size:13px;
+    color:#555;
+    line-height:20px;
+    margin:12px 0;
+    text-align:center;
 }
 
 .frame{
     width:360px;
+    max-width:96%;
     background:#111;
     padding:14px;
     box-shadow:0 25px 60px rgba(0,0,0,.45);
@@ -96,23 +157,28 @@ body{
     font-weight:bold;
 }
 
-.tip{
-    font-size:12px;
-    color:#555;
-    line-height:18px;
-    margin-bottom:12px;
-}
-
-@media(max-width:800px){
+@media(max-width:600px){
     body{
-        flex-direction:column;
-        align-items:center;
-        padding:16px;
+        padding:14px;
+        gap:18px;
     }
 
     .panel{
-        width:100%;
-        max-width:360px;
+        padding:18px;
+    }
+
+    .uploadBtn{
+        padding:17px;
+        font-size:17px;
+    }
+
+    .saveBtn{
+        padding:20px;
+        font-size:20px;
+    }
+
+    .photoBox{
+        height:220px;
     }
 }
 </style>
@@ -121,18 +187,28 @@ body{
 <body>
 
 <div class="panel">
-    <h2>인생네컷 만들기</h2>
+    <h2>📷 인생네컷 만들기</h2>
 
-    <input type="file" accept="image/*" onchange="loadPhoto(event,0)">
-    <input type="file" accept="image/*" onchange="loadPhoto(event,1)">
-    <input type="file" accept="image/*" onchange="loadPhoto(event,2)">
-    <input type="file" accept="image/*" onchange="loadPhoto(event,3)">
+    <label class="uploadBtn">사진 1 선택
+        <input type="file" accept="image/*" onchange="loadPhoto(event,0)">
+    </label>
+    <label class="uploadBtn">사진 2 선택
+        <input type="file" accept="image/*" onchange="loadPhoto(event,1)">
+    </label>
+    <label class="uploadBtn">사진 3 선택
+        <input type="file" accept="image/*" onchange="loadPhoto(event,2)">
+    </label>
+    <label class="uploadBtn">사진 4 선택
+        <input type="file" accept="image/*" onchange="loadPhoto(event,3)">
+    </label>
 
     <div class="tip">
-        PC: 마우스 휠 확대/축소, 드래그 이동<br>
-        모바일: 두 손가락 확대/축소, 한 손가락 이동<br>
-        더블클릭: 사진 위치 초기화
+        사진 안에서 드래그: 위치 이동<br>
+        PC: 휠 확대/축소 / 모바일: 두 손가락 확대/축소<br>
+        아래 목록 드래그 또는 ↑↓ 버튼으로 순서 변경
     </div>
+
+    <div class="orderBox" id="orderBox"></div>
 
     <input type="text" id="nameInput" value="지수네컷" oninput="updateText()">
 
@@ -143,291 +219,255 @@ body{
         <option value="#bde0fe">하늘색 프레임</option>
     </select>
 
-    <button onclick="saveImage()">PNG 저장</button>
+    <button class="saveBtn" onclick="saveImage()">💾 PNG 저장</button>
 </div>
 
 <div class="frame" id="photoFrame">
-
-    <div class="photoBox"><img class="photo" id="photo0"></div>
-    <div class="photoBox"><img class="photo" id="photo1"></div>
-    <div class="photoBox"><img class="photo" id="photo2"></div>
-    <div class="photoBox"><img class="photo" id="photo3"></div>
+    <div class="photoBox" data-index="0"><img class="photo" id="photo0"></div>
+    <div class="photoBox" data-index="1"><img class="photo" id="photo1"></div>
+    <div class="photoBox" data-index="2"><img class="photo" id="photo2"></div>
+    <div class="photoBox" data-index="3"><img class="photo" id="photo3"></div>
 
     <div class="footer" id="footer">
         <div class="date" id="dateText"></div>
         <div class="name" id="nameText">지수네컷</div>
     </div>
-
 </div>
 
 <script>
 const state = [
-    {scale:1, x:0, y:0, baseW:0, baseH:0},
-    {scale:1, x:0, y:0, baseW:0, baseH:0},
-    {scale:1, x:0, y:0, baseW:0, baseH:0},
-    {scale:1, x:0, y:0, baseW:0, baseH:0}
+    {scale:1,x:0,y:0,baseW:0,baseH:0},
+    {scale:1,x:0,y:0,baseW:0,baseH:0},
+    {scale:1,x:0,y:0,baseW:0,baseH:0},
+    {scale:1,x:0,y:0,baseW:0,baseH:0}
 ];
 
-let dragIndex = null;
-let startX = 0;
-let startY = 0;
-let startPhotoX = 0;
-let startPhotoY = 0;
-
-let touchStartDistance = 0;
-let touchStartScale = 1;
-let touchStartCenterX = 0;
-let touchStartCenterY = 0;
-let touchStartPhotoX = 0;
-let touchStartPhotoY = 0;
+let dragIndex=null,startX=0,startY=0,startPhotoX=0,startPhotoY=0;
+let touchStartDistance=0,touchStartScale=1,touchStartCenterX=0,touchStartCenterY=0,touchStartPhotoX=0,touchStartPhotoY=0;
 
 function loadPhoto(event,index){
-    const file = event.target.files[0];
-    if(!file) return;
-
-    const reader = new FileReader();
-
-    reader.onload = function(e){
-        const img = document.getElementById("photo"+index);
-
-        img.onload = function(){
-            resetPhoto(index);
-        };
-
-        img.src = e.target.result;
+    const file=event.target.files[0];
+    if(!file)return;
+    const reader=new FileReader();
+    reader.onload=function(e){
+        const img=document.getElementById("photo"+index);
+        img.onload=function(){resetPhoto(index);}
+        img.src=e.target.result;
+        updateOrder();
     };
-
     reader.readAsDataURL(file);
 }
 
 function resetPhoto(index){
-    const img = document.getElementById("photo"+index);
-    const box = img.parentElement;
+    const img=document.getElementById("photo"+index);
+    const box=img.parentElement;
+    const ratio=Math.max(box.clientWidth/img.naturalWidth, box.clientHeight/img.naturalHeight);
 
-    const boxW = box.clientWidth;
-    const boxH = box.clientHeight;
+    state[index].baseW=img.naturalWidth*ratio;
+    state[index].baseH=img.naturalHeight*ratio;
+    state[index].scale=1;
+    state[index].x=0;
+    state[index].y=0;
 
-    const imgW = img.naturalWidth;
-    const imgH = img.naturalHeight;
-
-    const ratio = Math.max(boxW / imgW, boxH / imgH);
-
-    state[index].baseW = imgW * ratio;
-    state[index].baseH = imgH * ratio;
-    state[index].scale = 1;
-    state[index].x = 0;
-    state[index].y = 0;
-
-    img.style.width = state[index].baseW + "px";
-    img.style.height = state[index].baseH + "px";
-
+    img.style.width=state[index].baseW+"px";
+    img.style.height=state[index].baseH+"px";
     applyTransform(index);
 }
 
 function applyTransform(index){
-    const img = document.getElementById("photo"+index);
-    const s = state[index];
-
-    img.style.transform =
-        `translate(calc(-50% + ${s.x}px), calc(-50% + ${s.y}px)) scale(${s.scale})`;
+    const img=document.getElementById("photo"+index);
+    const s=state[index];
+    img.style.transform=`translate(calc(-50% + ${s.x}px), calc(-50% + ${s.y}px)) scale(${s.scale})`;
 }
 
-function zoomPhoto(event,index){
-    event.preventDefault();
-
-    const s = state[index];
-
-    if(event.deltaY < 0){
-        s.scale += 0.08;
-    }else{
-        s.scale -= 0.08;
-    }
-
-    if(s.scale < 0.4) s.scale = 0.4;
-    if(s.scale > 5) s.scale = 5;
-
+function zoomPhoto(e,index){
+    e.preventDefault();
+    state[index].scale += e.deltaY < 0 ? 0.08 : -0.08;
+    state[index].scale=Math.max(.4,Math.min(5,state[index].scale));
     applyTransform(index);
 }
 
-function startDrag(event,index){
-    event.preventDefault();
-
-    dragIndex = index;
-    startX = event.clientX;
-    startY = event.clientY;
-    startPhotoX = state[index].x;
-    startPhotoY = state[index].y;
-
-    document.getElementById("photo"+index).style.cursor = "grabbing";
+function startDrag(e,index){
+    e.preventDefault();
+    dragIndex=index;
+    startX=e.clientX;
+    startY=e.clientY;
+    startPhotoX=state[index].x;
+    startPhotoY=state[index].y;
 }
 
-function moveDrag(event){
-    if(dragIndex === null) return;
-
-    const dx = event.clientX - startX;
-    const dy = event.clientY - startY;
-
-    state[dragIndex].x = startPhotoX + dx;
-    state[dragIndex].y = startPhotoY + dy;
-
+function moveDrag(e){
+    if(dragIndex===null)return;
+    state[dragIndex].x=startPhotoX+(e.clientX-startX);
+    state[dragIndex].y=startPhotoY+(e.clientY-startY);
     applyTransform(dragIndex);
 }
 
-function endDrag(){
-    if(dragIndex !== null){
-        document.getElementById("photo"+dragIndex).style.cursor = "grab";
-    }
-
-    dragIndex = null;
-}
+function endDrag(){dragIndex=null;}
 
 function getDistance(t1,t2){
-    const dx = t1.clientX - t2.clientX;
-    const dy = t1.clientY - t2.clientY;
-    return Math.sqrt(dx*dx + dy*dy);
+    return Math.hypot(t1.clientX-t2.clientX,t1.clientY-t2.clientY);
 }
 
 function getCenter(t1,t2){
-    return {
-        x:(t1.clientX + t2.clientX) / 2,
-        y:(t1.clientY + t2.clientY) / 2
-    };
+    return {x:(t1.clientX+t2.clientX)/2,y:(t1.clientY+t2.clientY)/2};
 }
 
-function startTouch(event,index){
-    event.preventDefault();
+function startTouch(e,index){
+    e.preventDefault();
+    dragIndex=index;
 
-    if(event.touches.length === 1){
-        dragIndex = index;
-        startX = event.touches[0].clientX;
-        startY = event.touches[0].clientY;
-        startPhotoX = state[index].x;
-        startPhotoY = state[index].y;
+    if(e.touches.length===1){
+        startX=e.touches[0].clientX;
+        startY=e.touches[0].clientY;
+        startPhotoX=state[index].x;
+        startPhotoY=state[index].y;
     }
 
-    if(event.touches.length === 2){
-        dragIndex = index;
-
-        touchStartDistance = getDistance(event.touches[0], event.touches[1]);
-        touchStartScale = state[index].scale;
-
-        const center = getCenter(event.touches[0], event.touches[1]);
-
-        touchStartCenterX = center.x;
-        touchStartCenterY = center.y;
-        touchStartPhotoX = state[index].x;
-        touchStartPhotoY = state[index].y;
+    if(e.touches.length===2){
+        touchStartDistance=getDistance(e.touches[0],e.touches[1]);
+        touchStartScale=state[index].scale;
+        const c=getCenter(e.touches[0],e.touches[1]);
+        touchStartCenterX=c.x;
+        touchStartCenterY=c.y;
+        touchStartPhotoX=state[index].x;
+        touchStartPhotoY=state[index].y;
     }
 }
 
-function moveTouch(event,index){
-    event.preventDefault();
+function moveTouch(e,index){
+    e.preventDefault();
+    if(dragIndex===null)return;
 
-    if(dragIndex === null) return;
-
-    if(event.touches.length === 1){
-        const dx = event.touches[0].clientX - startX;
-        const dy = event.touches[0].clientY - startY;
-
-        state[index].x = startPhotoX + dx;
-        state[index].y = startPhotoY + dy;
+    if(e.touches.length===1){
+        state[index].x=startPhotoX+(e.touches[0].clientX-startX);
+        state[index].y=startPhotoY+(e.touches[0].clientY-startY);
     }
 
-    if(event.touches.length === 2){
-        const newDistance = getDistance(event.touches[0], event.touches[1]);
-        const scaleRatio = newDistance / touchStartDistance;
-
-        state[index].scale = touchStartScale * scaleRatio;
-
-        if(state[index].scale < 0.4) state[index].scale = 0.4;
-        if(state[index].scale > 5) state[index].scale = 5;
-
-        const center = getCenter(event.touches[0], event.touches[1]);
-
-        state[index].x = touchStartPhotoX + (center.x - touchStartCenterX);
-        state[index].y = touchStartPhotoY + (center.y - touchStartCenterY);
+    if(e.touches.length===2){
+        const newDistance=getDistance(e.touches[0],e.touches[1]);
+        state[index].scale=touchStartScale*(newDistance/touchStartDistance);
+        state[index].scale=Math.max(.4,Math.min(5,state[index].scale));
+        const c=getCenter(e.touches[0],e.touches[1]);
+        state[index].x=touchStartPhotoX+(c.x-touchStartCenterX);
+        state[index].y=touchStartPhotoY+(c.y-touchStartCenterY);
     }
 
     applyTransform(index);
 }
 
-function endTouch(){
-    dragIndex = null;
-}
-
 function updateText(){
-    document.getElementById("nameText").innerText =
-        document.getElementById("nameInput").value;
+    document.getElementById("nameText").innerText=document.getElementById("nameInput").value;
 }
 
 function changeColor(){
-    const color = document.getElementById("colorSelect").value;
-    const frame = document.getElementById("photoFrame");
-    const footer = document.getElementById("footer");
-
-    frame.style.background = color;
-
-    if(color === "#ffffff" || color === "#f8c8dc" || color === "#bde0fe"){
-        footer.style.color = "#111";
-    }else{
-        footer.style.color = "white";
-    }
+    const color=document.getElementById("colorSelect").value;
+    document.getElementById("photoFrame").style.background=color;
+    document.getElementById("footer").style.color =
+        ["#ffffff","#f8c8dc","#bde0fe"].includes(color) ? "#111" : "white";
 }
 
 function setToday(){
-    const today = new Date();
-    const y = today.getFullYear();
-    const m = String(today.getMonth()+1).padStart(2,"0");
-    const d = String(today.getDate()).padStart(2,"0");
-
-    document.getElementById("dateText").innerText = `${y}.${m}.${d}`;
+    const t=new Date();
+    document.getElementById("dateText").innerText=
+        `${t.getFullYear()}.${String(t.getMonth()+1).padStart(2,"0")}.${String(t.getDate()).padStart(2,"0")}`;
 }
 
 function saveImage(){
     updateText();
-
     html2canvas(document.querySelector("#photoFrame"),{
         scale:3,
         useCORS:true,
         backgroundColor:null
-    }).then(function(canvas){
-        const link = document.createElement("a");
-        link.download = "Life4Cut.png";
-        link.href = canvas.toDataURL("image/png");
+    }).then(canvas=>{
+        const link=document.createElement("a");
+        link.download="Life4Cut.png";
+        link.href=canvas.toDataURL("image/png");
         link.click();
     });
 }
 
-for(let i=0; i<4; i++){
-    const img = document.getElementById("photo"+i);
+function movePhotoBox(from,to){
+    const frame=document.getElementById("photoFrame");
+    const boxes=[...frame.querySelectorAll(".photoBox")];
 
-    img.addEventListener("wheel", function(e){
-        zoomPhoto(e,i);
-    }, {passive:false});
+    if(to<0 || to>=boxes.length)return;
 
-    img.addEventListener("mousedown", function(e){
-        startDrag(e,i);
-    });
+    if(from<to){
+        frame.insertBefore(boxes[from], boxes[to].nextSibling);
+    }else{
+        frame.insertBefore(boxes[from], boxes[to]);
+    }
 
-    img.addEventListener("dblclick", function(){
-        resetPhoto(i);
-    });
-
-    img.addEventListener("touchstart", function(e){
-        startTouch(e,i);
-    }, {passive:false});
-
-    img.addEventListener("touchmove", function(e){
-        moveTouch(e,i);
-    }, {passive:false});
-
-    img.addEventListener("touchend", endTouch);
+    updateOrder();
 }
 
-document.addEventListener("mousemove", moveDrag);
-document.addEventListener("mouseup", endDrag);
+function updateOrder(){
+    const orderBox=document.getElementById("orderBox");
+    const boxes=[...document.querySelectorAll(".photoBox")];
+
+    orderBox.innerHTML="";
+
+    boxes.forEach((box,pos)=>{
+        const index=box.dataset.index;
+        const item=document.createElement("div");
+        item.className="orderItem";
+        item.draggable=true;
+        item.dataset.pos=pos;
+        item.innerHTML=`
+            <span>사진 ${Number(index)+1}</span>
+            <div>
+                <button onclick="movePhotoBox(${pos},${pos-1})">↑</button>
+                <button onclick="movePhotoBox(${pos},${pos+1})">↓</button>
+            </div>
+        `;
+
+        item.addEventListener("dragstart",e=>{
+            e.dataTransfer.setData("text/plain",pos);
+        });
+
+        item.addEventListener("dragover",e=>e.preventDefault());
+
+        item.addEventListener("drop",e=>{
+            e.preventDefault();
+            const from=Number(e.dataTransfer.getData("text/plain"));
+            const to=Number(item.dataset.pos);
+            movePhotoBox(from,to);
+        });
+
+        item.addEventListener("touchstart",e=>{
+            item.dataset.touchY=e.touches[0].clientY;
+            item.dataset.from=pos;
+        },{passive:true});
+
+        item.addEventListener("touchend",e=>{
+            const startY=Number(item.dataset.touchY);
+            const endY=e.changedTouches[0].clientY;
+            const diff=endY-startY;
+            if(diff>35) movePhotoBox(pos,pos+1);
+            if(diff<-35) movePhotoBox(pos,pos-1);
+        },{passive:true});
+
+        orderBox.appendChild(item);
+    });
+}
+
+for(let i=0;i<4;i++){
+    const img=document.getElementById("photo"+i);
+
+    img.addEventListener("wheel",e=>zoomPhoto(e,i),{passive:false});
+    img.addEventListener("mousedown",e=>startDrag(e,i));
+    img.addEventListener("touchstart",e=>startTouch(e,i),{passive:false});
+    img.addEventListener("touchmove",e=>moveTouch(e,i),{passive:false});
+    img.addEventListener("touchend",()=>dragIndex=null);
+    img.addEventListener("dblclick",()=>resetPhoto(i));
+}
+
+document.addEventListener("mousemove",moveDrag);
+document.addEventListener("mouseup",endDrag);
 
 setToday();
+updateOrder();
 </script>
 
 </body>
